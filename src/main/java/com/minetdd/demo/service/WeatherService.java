@@ -16,7 +16,6 @@ public class WeatherService {
     WeatherRepository repository;
 
 
-
     @Cacheable("weather")
     public Weather getWeatherById(Long id) {
         return repository.findById(id).orElseThrow(()-> new WeatherNotFoundException("No se ha encontrado el weather : "+ id));
@@ -32,5 +31,13 @@ public class WeatherService {
 
     public Weather updateWeather(Weather weather) {
         return repository.save(weather);
+    }
+
+    public void deleteWeather(Long id) {
+        repository.deleteById(id);
+    }
+
+    public Weather getWeatherByCity(String city) {
+        return repository.findByCity(city);
     }
 }

@@ -28,6 +28,13 @@ public class WeatherApiRestController {
         return new ResponseEntity(weather, HttpStatus.OK);
     }
 
+    @GetMapping(params = {"city"}, produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseStatus(HttpStatus.OK)
+    public ResponseEntity getWeatherByCity(@RequestParam("city") String city){
+        Weather weather = service.getWeatherByCity(city);
+        return new ResponseEntity(weather, HttpStatus.OK);
+    }
+
 
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.OK)
@@ -47,6 +54,12 @@ public class WeatherApiRestController {
     @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity updateWeather(@Valid @RequestBody Weather weather){
         return new ResponseEntity(service.updateWeather(weather), HttpStatus.CREATED);
+    }
+
+    @DeleteMapping("/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deleteWeather(@PathVariable Long id){
+        service.deleteWeather(id);
     }
 
 

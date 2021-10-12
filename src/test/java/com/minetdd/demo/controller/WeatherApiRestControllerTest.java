@@ -60,6 +60,19 @@ class WeatherApiRestControllerTest {
                 .andExpect(jsonPath("state").value("Valle del Cauca"));
     }
 
+
+    @Test
+    void testWeatherByCity() throws Exception {
+        //when(service.getWeatherByCity(any())).thenReturn(allWeather().get(0));
+        given(service.getWeatherByCity(any())).willReturn(allWeather().get(0));
+
+        mockMvc.perform(get("/weather").param("city", "Cali"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$").isMap())
+                .andExpect(jsonPath("city").value("Cali"))
+                .andExpect(jsonPath("state").value("Valle del Cauca"));
+    }
+
     @Test
     void weather_NotFound() throws Exception {
         given(service.getWeatherById(anyLong())).willThrow(new WeatherNotFoundException("No encontrado"));
@@ -132,6 +145,15 @@ class WeatherApiRestControllerTest {
                 .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest())
                 .andDo(print());
+    }
+
+
+    @Test
+    void testDeleteWeather() throws Exception {
+        mockMvc.perform(delete("/weather/1")
+        .contentType(MediaType.APPLICATION_JSON)
+        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNoContent());
     }
 
 

@@ -21,6 +21,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
+import static org.mockito.Mockito.*;
 import static org.mockito.MockitoAnnotations.openMocks;
 
 class WeatherServiceTest {
@@ -44,6 +45,16 @@ class WeatherServiceTest {
         given(repository.findById(1L)).willReturn(Optional.of(new Weather(1L, new Date(), "Cali", "Valle del Cauca", 36.5)));
 
         Weather weather = service.getWeatherById(1L);
+        assertNotNull(weather);
+        assertEquals("Cali", weather.getCity());
+        assertEquals("Valle del Cauca", weather.getState());
+    }
+
+    @Test
+    void getWeatherByCity(){
+        given(repository.findByCity(any())).willReturn(new Weather(1L, new Date(), "Cali", "Valle del Cauca", 36.5));
+
+        Weather weather = service.getWeatherByCity(any());
         assertNotNull(weather);
         assertEquals("Cali", weather.getCity());
         assertEquals("Valle del Cauca", weather.getState());
@@ -82,7 +93,15 @@ class WeatherServiceTest {
 
         then(repository).should().save(type.capture());
         assertEquals("Cali", savedWeather.getCity());
-        assertTrue(type.getValue().getId() != null);
+        assertNotNull(type.getValue().getId());
+    }
+
+
+    @Test
+    void deleteWeather(){
+        doNothing().when(repository).deleteById(anyLong());
+        service.deleteWeather(anyLong());
+        verify(repository, times(1)).deleteById(anyLong());
     }
 
 

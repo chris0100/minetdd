@@ -10,6 +10,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.text.ParseException;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
 import static com.minetdd.demo.DataDummy.weather;
@@ -27,6 +28,12 @@ class WeatherRepositoryTest {
     void findById(){
         Optional<Weather> weather = repository.findById(1L);
         assertTrue(weather.isPresent());
+    }
+
+    @Test
+    void findByCity(){
+        Weather weather = repository.findByCity("Cali");
+        assertEquals("Cali", weather.getCity());
     }
 
     @Test
@@ -61,6 +68,19 @@ class WeatherRepositoryTest {
         Optional<Weather> uptadeWeather = repository.findById(1L);
         assertEquals("Jamundi", uptadeWeather.get().getCity());
     }
+
+
+    @Test
+    void testDelete(){
+        Weather weather = repository.findById(1L).orElse(null);
+        assertNotNull(weather);
+        assertEquals("Cali", weather.getCity());
+
+        repository.delete(weather);
+        assertThrows(NoSuchElementException.class, () -> repository.findById(1L).get());
+        assertEquals(3, repository.findAll().size());
+    }
+
 
 
 }

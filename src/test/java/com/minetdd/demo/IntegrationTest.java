@@ -12,6 +12,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.text.ParseException;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
@@ -37,6 +38,15 @@ class IntegrationTest {
         assertEquals(HttpStatus.OK, response.getStatusCode());
         System.out.println(response.getBody());
         assertEquals("Cali", Objects.requireNonNull(response.getBody()).getCity());
+    }
+
+    @Test
+    void getWeatherByCity(){
+        HttpEntity<String> entity = new HttpEntity<>(null, headers);
+        ResponseEntity<Weather> responseEntity = restTemplate.exchange(
+                "/weather?city=Cali", HttpMethod.GET, entity, Weather.class);
+        assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
+        assertEquals("Cali", Objects.requireNonNull(responseEntity.getBody()).getCity());
     }
 
 
@@ -82,7 +92,21 @@ class IntegrationTest {
 
         assertEquals(HttpStatus.CREATED, response.getStatusCode());
         assertEquals("Jamundi", Objects.requireNonNull(response.getBody()).getCity());
+    }
 
+
+    @Test
+    void deleteWeather(){
+        ResponseEntity<Weather[]> respuesta = restTemplate.getForEntity("/weather", Weather[].class);
+        List<Weather> weatherList = Arrays.asList(Objects.requireNonNull(respuesta.getBody()));
+        assertEquals(4, weatherList.size());
+
+        restTemplate.delete("/weather/2");
+
+        respuesta = restTemplate.getForEntity("/weather", Weather[].class);
+        weatherList = Arrays.asList(Objects.requireNonNull(respuesta.getBody()));
+        assertEquals(3, weatherList.size());
+        assertEquals(HttpStatus.OK, respuesta.getStatusCode());
     }
 
 
