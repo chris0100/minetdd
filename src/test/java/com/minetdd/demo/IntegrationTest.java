@@ -42,9 +42,9 @@ class IntegrationTest {
 
     @Test
     void getWeatherByCity(){
-        HttpEntity<String> entity = new HttpEntity<>(null, headers);
-        ResponseEntity<Weather> responseEntity = restTemplate.exchange(
-                "/weather?city=Cali", HttpMethod.GET, entity, Weather.class);
+        //HttpEntity<String> entity = new HttpEntity<>(null, headers);
+        ResponseEntity<Weather> responseEntity = restTemplate.getForEntity(
+                "/weather?city=Cali", Weather.class);
         assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
         assertEquals("Cali", Objects.requireNonNull(responseEntity.getBody()).getCity());
     }
